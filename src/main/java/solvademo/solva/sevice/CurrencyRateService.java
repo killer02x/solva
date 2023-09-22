@@ -21,13 +21,12 @@ public class CurrencyRateService {
         return currencyRateRepository.findByCurrencyPairAndDate(currencyPair, date);
     }
 
-    // Добавьте метод для сохранения курса валюты, если он еще не существует в базе данных
+
     public void saveRate(CurrencyRate rate) {
         if (currencyRateRepository.findByCurrencyPairAndDate(rate.getCurrencyPair(), rate.getDate()) == null) {
             currencyRateRepository.save(rate);
         }
     }
 
-    // Дополнительные методы по мере необходимости
 }
 

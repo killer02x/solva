@@ -29,13 +29,11 @@ public class ExternalApiService {
     public CurrencyRate getExchangeRate(String fromCurrency, String toCurrency, LocalDate date) {
         String currencyPair = fromCurrency + "," + toCurrency;
 
-        // Проверяем, существует ли курс в базе данных
         CurrencyRate currencyRate = currencyRateService.getRateForDate(currencyPair, date);
         if (currencyRate != null) {
             return currencyRate;
         }
 
-        // Если курса нет в базе данных, получаем его с внешнего API
         var response = webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/time_series")
@@ -47,7 +45,7 @@ public class ExternalApiService {
                 .bodyToMono(TwelveDataResponse.class)
                 .block();
 
-        // Получаем CurrencyData из response
+
         TwelveDataResponse.CurrencyData currencyData = response.getCurrencyData(toCurrency);
 
         // Проверяем ответ API
@@ -60,12 +58,7 @@ public class ExternalApiService {
         LocalDate responseDate = LocalDate.parse(latestValue.getDatetime(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         LocalDateTime responseDateTime = responseDate.atStartOfDay(); // или используйте другое время, если у вас есть конкретное время
 
-        // Проверяем, совпадает ли дата ответа с запрашиваемой датой
-//        if (!responseDate.equals(date)) {
-//            throw new RuntimeException("Дата курса валюты не совпадает с запрашиваемой датой");
-//        }
 
-        // Сохраняем полученный курс в базе данных
         currencyRate = new CurrencyRate();
         currencyRate.setCurrencyPair(currencyPair);
         currencyRate.setRate(rate);

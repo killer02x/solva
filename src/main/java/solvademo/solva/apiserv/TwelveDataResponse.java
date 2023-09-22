@@ -54,7 +54,6 @@ public class TwelveDataResponse {
         private String datetime;
         private String close;
 
-        // Getters and setters
 
         public String getDatetime() {
             return datetime;

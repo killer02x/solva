@@ -30,17 +30,12 @@ public class TransactionService {
     public void saveTransaction(TransactionDTO transactionDTO) {
         Transaction transaction = transactionMapper.toEntity(transactionDTO);
 
-        // Получаем текущий курс валюты
-        CurrencyRate currentRate = externalApiService.getExchangeRate(transactionDTO.getCurrencyShortname(), "USD", LocalDate.now());
+        CurrencyRate currentRate = externalApiService.getExchangeRate(transactionDTO.getCurrencyShortname(), "RUB", LocalDate.now());
 
-        // Проверяем, не равен ли currentRate null
         if (currentRate == null) {
-            // Обрабатываем ситуацию, когда currentRate равен null
-            // Например, можно выбросить исключение или вернуть ошибку
-            throw new RuntimeException("Не удалось получить курс валюты для " + transactionDTO.getCurrencyShortname() + "/USD");
+            throw new RuntimeException("Не удалось получить курс валюты для " + transactionDTO.getCurrencyShortname() + "/RUB");
         }
 
-        // Конвертируем сумму транзакции в USD
         BigDecimal transactionSum = transactionDTO.getSum();
         BigDecimal convertedAmount = transactionSum.divide(currentRate.getRate(), MathContext.DECIMAL64);
 
